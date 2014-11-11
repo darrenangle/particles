@@ -140,7 +140,7 @@ renderer.render(scene, camera);
 
 
 function update(){
-	particleSystem.rotation.y += 0.01;
+	particleSystem.rotation.y += 0.001;
 	var pCount = particleCount-1;
   while (pCount--) {
 
@@ -159,10 +159,8 @@ function update(){
     particle.velocity.y -= Math.random() * .1;
 
     // and the position
-    particle.x -= Math.random() * .1;
     particle.y -= Math.random() * .1;
-    //particle.y += Math.random() * .1;
-    particle.z -= Math.random() * .1;
+    particle.y += Math.random() * .1;
   }
 
   // flag to the particle system
