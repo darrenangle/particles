@@ -49,7 +49,7 @@ var radius = 50,
 	rings = 16;
 
 var sphereMaterial = new THREE.MeshLambertMaterial({
-	color: 0xCC0000
+	color: 0xAAAAAA
 });
 
 //create a new mesh with sphere geometry
@@ -65,15 +65,61 @@ var sphere = new THREE.Mesh(
 	sphereMaterial
 );
 
-var pointLight = new THREE.PointLight(0xFFFFFF);
-
-	pointLight.position.x = 60;
-	pointLight.position.y = 50;
-	pointLight.position.z = 130;
-
-scene.add(pointLight);
 scene.add(sphere);
 
-renderer.render(scene,camera);
+
+//Add light
+
+var pointLight = new THREE.PointLight(0xFFFFFF);
+
+	pointLight.position.x = 10;
+	pointLight.position.y = 50;
+	pointLight.position.z = 130;
+	pointLight.intensity = 1;
+
+scene.add(pointLight);
+
+
+//-------------
+//	Render particles
+//-------------	
+
+//particle variables
+var particleCount = 1800,
+	particles = new THREE.Geometry();
+var particleImg = THREE.ImageUtils.loadTexture('img/particle.png', {}, function(){
+	renderer.render(scene,camera);
+});
+var pMaterial = new THREE.PointCloudMaterial({
+  		size: 10,
+  		map: particleImg,
+  		blending: THREE.AdditiveBlending,
+  		transparent: true
+	});
+
+
+//create individual particles
+for (var p = 0; p < particleCount; p++){
+
+	//create a particle with random position values, -250 -> 250
+	var pX = Math.random() * 500 - 250,
+		pY = Math.random() * 500 - 250,
+		pZ = Math.random() * 500 - 250;
+		var particle = new THREE.Vector3(pX, pY, pZ);
+	// add it to the geometry
+	particles.vertices.push(particle);
+}
+
+// create the particle system
+var particleSystem = new THREE.PointCloud(
+		particles,
+		pMaterial
+	);
+
+particleSystem.sortParticles = true;
+
+scene.add(particleSystem);
+
+
 
 
