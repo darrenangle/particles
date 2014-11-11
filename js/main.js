@@ -1,3 +1,14 @@
+window.requestAnimFrame = (function(){
+      return  window.requestAnimationFrame       || 
+              window.webkitRequestAnimationFrame || 
+              window.mozRequestAnimationFrame    || 
+              window.oRequestAnimationFrame      || 
+              window.msRequestAnimationFrame     || 
+              function(/* function */ callback, /* DOMElement */ element){
+                window.setTimeout(callback, 1000 / 60);
+              };
+    })();
+
 //-------------
 //	Scene
 //-------------	
@@ -106,6 +117,10 @@ for (var p = 0; p < particleCount; p++){
 		pY = Math.random() * 500 - 250,
 		pZ = Math.random() * 500 - 250;
 		var particle = new THREE.Vector3(pX, pY, pZ);
+		particle.velocity = new THREE.Vector3(
+			  0,              // x
+			  -Math.random(), // y: random vel
+			  0); 
 	// add it to the geometry
 	particles.vertices.push(particle);
 }
@@ -119,6 +134,47 @@ var particleSystem = new THREE.PointCloud(
 particleSystem.sortParticles = true;
 
 scene.add(particleSystem);
+renderer.render(scene, camera);
+
+
+
+
+function update(){
+	particleSystem.rotation.y += 0.01;
+	var pCount = particleCount-1;
+  while (pCount--) {
+
+    // get the particle
+    var particle =
+      particles.vertices[pCount];
+
+    // check if we need to reset
+    if (particle.y < -200) {
+      particle.y = 200;
+      particle.y = 0;
+    }
+
+    // update the velocity with
+    // a splat of randomniz
+    particle.velocity.y -= Math.random() * .1;
+
+    // and the position
+    particle.x -= Math.random() * .1;
+    particle.y -= Math.random() * .1;
+    //particle.y += Math.random() * .1;
+    particle.z -= Math.random() * .1;
+  }
+
+  // flag to the particle system
+  // that we've changed its vertices.
+  particleSystem.
+    geometry.
+    __dirtyVertices = true;
+	renderer.render(scene, camera);
+	requestAnimFrame(update);
+}
+
+requestAnimFrame(update);
 
 
 
